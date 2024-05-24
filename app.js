@@ -16,12 +16,30 @@ const bot = new Bot('6772177688:AAFacMKVgf450O65E3wVVFglSPcY4Tlwox0') // 将 YOU
 // 创建 inline keyboard 按钮
 const inlineKeyboard = new InlineKeyboard().url('打开链接', 'https://app.hotfi.io/')
 // 处理 /start 命令
-bot.command('start', (ctx) => {
+bot.command('start', async (ctx) => {
     ctx.reply('欢迎使用我的 Telegram 机器人！点击按钮打开链接：', {
         reply_markup: inlineKeyboard,
     })
+    await bot.api.setMyCommands([
+        { command: 'start', description: 'Start the bot' },
+        { command: 'help', description: 'Show help text' },
+        { command: 'settings', description: 'Open settings' },
+    ])
 })
 bot.on('message', (ctx) => ctx.reply('您发送了消息：' + ctx.message.text))
+bot.on('message_reaction', async (ctx) => {
+    const { emoji, emojiAdded, emojiRemoved } = ctx.reactions()
+    if (emojiRemoved.includes('👍')) {
+        // 点赞已被删除！不可接受。
+        if (emoji.includes('👌')) {
+            // 还是可以的，不处罚
+            await ctx.reply('我原谅你')
+        } else {
+            // 他们怎么敢的，给丫封了。
+            await ctx.banAuthor()
+        }
+    }
+})
 
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
