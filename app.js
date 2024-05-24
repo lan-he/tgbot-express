@@ -4,17 +4,23 @@ var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 
-const { Bot, webhookCallback } = require('grammy')
+const { Bot, webhookCallback, InlineKeyboard } = require('grammy')
 const bot = new Bot('6772177688:AAFacMKVgf450O65E3wVVFglSPcY4Tlwox0') // 将 YOUR_TELEGRAM_BOT_TOKEN 替换为您的 API Token
 // bot.command('start', (ctx) => ctx.reply('欢迎使用我的 Telegram 机器人！'))
-
+// bot.command('start', (ctx) => {
+//     ctx.reply(
+//         '欢迎使用我的 Telegram 机器人！点击以下链接访问：<a href="https://app.hotfi.io/">打开链接</a>',
+//         { parse_mode: 'HTML' }
+//     )
+// })
+// 创建 inline keyboard 按钮
+const inlineKeyboard = new InlineKeyboard().url('打开链接', 'https://app.hotfi.io/')
+// 处理 /start 命令
 bot.command('start', (ctx) => {
-    ctx.reply(
-        '欢迎使用我的 Telegram 机器人！点击以下链接访问：<a href="https://app.hotfi.io/">打开链接</a>',
-        { parse_mode: 'HTML' }
-    )
+    ctx.reply('欢迎使用我的 Telegram 机器人！点击按钮打开链接：', {
+        reply_markup: inlineKeyboard,
+    })
 })
-
 bot.on('message', (ctx) => ctx.reply('您发送了消息：' + ctx.message.text))
 
 var indexRouter = require('./routes/index')
